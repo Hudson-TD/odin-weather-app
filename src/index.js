@@ -3,6 +3,7 @@ console.log("Build Successful");
 import { parseWeekday, epochToHour } from "./utils";
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const reverse = require("reverse-geocode");
 
 const todayContainer = document.getElementById("weatherToday");
@@ -10,6 +11,9 @@ const forecastContainer = document.getElementById("threeDayForecast");
 const hourlyTable = document.getElementById("hourlyTable");
 const weatherNotices = document.getElementById("weatherNotices");
 const locationText = document.getElementById("userLocation");
+const searchInput = document.getElementById("search");
+const searchSubmitBtn = document.getElementById("searchSubmit");
+const trendingNews = document.getElementById("trendingNews");
 
 function init() {
   getLocation();
@@ -31,6 +35,7 @@ const successCb = (position) => {
   getWeatherToday(userHomeLocation.city);
   getThreeDayForecast(userHomeLocation.city);
   getHourlyForecast(userHomeLocation.city);
+  getTopNews();
 };
 
 const errorCb = (error) => {
@@ -51,7 +56,28 @@ const errorCb = (error) => {
   window.alert(
     "Home location could not be distinguished, please set this manually for the best experience!"
   );
+
+  locationText.innerText = `Home Location: Undefined`;
 };
+
+searchSubmitBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  citySearch();
+});
+
+async function citySearch() {
+  let searchVal = searchInput.value;
+  todayContainer.innerText = "";
+  forecastContainer.innerText = "";
+  hourlyTable.innerText = "";
+  try {
+    await getWeatherToday(searchVal);
+    await getThreeDayForecast(searchVal);
+    await getHourlyForecast(searchVal);
+  } catch (error) {
+    window.alert("Invalid search, please try again.");
+  }
+}
 
 function generateWeatherCard(weatherData) {
   let location = document.createElement("h3");
@@ -111,12 +137,29 @@ function generateHourlyForecastCards(hourlyData) {
   let conditionTd = document.createElement("td");
   conditionTd.innerText = hourlyData.condition.text;
   let temperatureTd = document.createElement("td");
-  temperatureTd.innerText = Math.trunc(hourlyData.temp_f);
+  temperatureTd.innerText = Math.trunc(hourlyData.temp_f) + " \u00B0F";
   let rainChanceTd = document.createElement("td");
   rainChanceTd.innerText = hourlyData.chance_of_rain;
 
   tableTr.append(timeTd, conditionTd, temperatureTd, rainChanceTd);
   hourlyTable.appendChild(tableTr);
+}
+
+function generateNewsStories(newsData) {
+  let storyCard = document.createElement("div");
+  storyCard.classList.add("storyCard");
+  let sourceName = document.createElement("h3");
+  sourceName.innerText = `${newsData.source.name}`;
+  let storyTitle = document.createElement("h4");
+  storyTitle.innerText = `${newsData.title}`;
+  let storyURL = document.createElement("a");
+  storyURL.innerText = `${newsData.url}`;
+  storyURL.href = `${newsData.url}`;
+  storyURL.target = `/blank`;
+
+  storyCard.append(sourceName, storyTitle, storyURL);
+
+  trendingNews.appendChild(storyCard);
 }
 
 // async function getHighlightsToday(city) {
@@ -132,7 +175,6 @@ async function getWeatherToday(city) {
   );
   const data = await request.json();
 
-  //console.log(data);
   generateWeatherCard(data);
 }
 
@@ -155,8 +197,20 @@ async function getHourlyForecast(city) {
   const data = await request.json();
   let target = data.forecast.forecastday[0];
 
-  for (let i = 0; i < target.hour.length; i++) {
+  for (let i = 7; i < target.hour.length; i++) {
     generateHourlyForecastCards(target.hour[i]);
+  }
+}
+
+async function getTopNews() {
+  const request = await fetch(
+    `https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`
+  );
+
+  const data = await request.json();
+
+  for (let i = 0; i < 5; i++) {
+    generateNewsStories(data.articles[i]);
   }
 }
 
