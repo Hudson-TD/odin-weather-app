@@ -2,7 +2,62 @@ console.log("Build Successful");
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
-let test = document.getElementById("today");
+const todayContainer = document.getElementById("today");
+
+function parseWeekday(value) {
+  switch (value) {
+    case 0:
+      return "Monday";
+      break;
+    case 1:
+      return "Tuesday";
+      break;
+    case 2:
+      return "Wednesday";
+      break;
+    case 3:
+      return "Thursday";
+      break;
+    case 4:
+      return "Friday";
+      break;
+    case 5:
+      return "Saturday";
+      break;
+    case 6:
+      return "Sunday";
+      break;
+    default:
+      break;
+  }
+}
+
+function generateWeatherCard(weatherData) {
+  let location = document.createElement("h3");
+  location.innerText = `${weatherData.location.name}, ${weatherData.location.region}`;
+  let lastUpdate = document.createElement("p");
+  lastUpdate.innerText = `${weatherData.current.last_updated}`;
+  let weekdayText = document.createElement("p");
+  weekdayText.innerText = parseWeekday(weatherData.current.is_day);
+  let conditionImg = document.createElement("img");
+  conditionImg.src = `${weatherData.current.condition.icon}`;
+  let conditionText = document.createElement("p");
+  conditionText.innerText = `${weatherData.current.condition.text}`;
+  let tempF = document.createElement("p");
+  tempF.innerText = `${weatherData.current.feelslike_f} \u00B0F`;
+  let humidity = document.createElement("p");
+  humidity.innerText = `${weatherData.current.humidity}%`;
+
+  todayContainer.append(
+    location,
+    lastUpdate,
+    weekdayText,
+    conditionText,
+    conditionImg,
+    tempF,
+    humidity
+  );
+}
 
 async function getWeatherToday() {
   const request = await fetch(
@@ -10,7 +65,8 @@ async function getWeatherToday() {
   );
   const data = await request.json();
 
-  console.log(data);
+  //console.log(data);
+  generateWeatherCard(data);
 }
 
 getWeatherToday();
