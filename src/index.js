@@ -1,12 +1,14 @@
 console.log("Build Successful");
 
-import parseWeekday from "./utils";
+import { parseWeekday, epochToHour } from "./utils";
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const reverse = require("reverse-geocode");
 
 const todayContainer = document.getElementById("weatherToday");
 const forecastContainer = document.getElementById("threeDayForecast");
+const hourlyTable = document.getElementById("hourlyTable");
+const weatherNotices = document.getElementById("weatherNotices");
 const locationText = document.getElementById("userLocation");
 
 function init() {
@@ -14,10 +16,7 @@ function init() {
 }
 
 async function getLocation() {
-  const userLocation = await navigator.geolocation.getCurrentPosition(
-    successCb,
-    errorCb
-  );
+  await navigator.geolocation.getCurrentPosition(successCb, errorCb);
 }
 
 const successCb = (position) => {
@@ -26,10 +25,12 @@ const successCb = (position) => {
   let y = position.coords.longitude;
 
   const parsedLocation = reverse.lookup(x, y, "us");
+  let userHomeLocation = parsedLocation;
 
-  locationText.innerText = `Home Location: ${parsedLocation.city}, ${parsedLocation.state}`;
-  getWeatherToday(parsedLocation.city);
-  getThreeDayForecast(parsedLocation.city);
+  locationText.innerText = `Home Location: ${userHomeLocation.city}, ${userHomeLocation.state}`;
+  getWeatherToday(userHomeLocation.city);
+  getThreeDayForecast(userHomeLocation.city);
+  getHourlyForecast(userHomeLocation.city);
 };
 
 const errorCb = (error) => {
@@ -47,6 +48,9 @@ const errorCb = (error) => {
   }
 
   console.log(errorMessage);
+  window.alert(
+    "Home location could not be distinguished, please set this manually for the best experience!"
+  );
 };
 
 function generateWeatherCard(weatherData) {
@@ -100,6 +104,28 @@ function generateForecastCards(forecastData) {
   forecastContainer.appendChild(card);
 }
 
+function generateHourlyForecastCards(hourlyData) {
+  let tableTr = document.createElement("tr");
+  let timeTd = document.createElement("td");
+  timeTd.innerText = hourlyData.time;
+  let conditionTd = document.createElement("td");
+  conditionTd.innerText = hourlyData.condition.text;
+  let temperatureTd = document.createElement("td");
+  temperatureTd.innerText = Math.trunc(hourlyData.temp_f);
+  let rainChanceTd = document.createElement("td");
+  rainChanceTd.innerText = hourlyData.chance_of_rain;
+
+  tableTr.append(timeTd, conditionTd, temperatureTd, rainChanceTd);
+  hourlyTable.appendChild(tableTr);
+}
+
+// async function getHighlightsToday(city) {
+//   const request = await fetch(
+//     `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`
+//   );
+//   const data = await request.json();
+// }
+
 async function getWeatherToday(city) {
   const request = await fetch(
     `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`
@@ -119,6 +145,18 @@ async function getThreeDayForecast(city) {
 
   for (let i = 0; i < target.length; i++) {
     generateForecastCards(target[i]);
+  }
+}
+
+async function getHourlyForecast(city) {
+  const request = await fetch(
+    `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=${city}`
+  );
+  const data = await request.json();
+  let target = data.forecast.forecastday[0];
+
+  for (let i = 0; i < target.hour.length; i++) {
+    generateHourlyForecastCards(target.hour[i]);
   }
 }
 

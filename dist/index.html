@@ -20,7 +20,7 @@
         <p id="userLocation"></p>
         <div>
           <label for="search">Search:</label>
-          <input name="search" placeholder="City name" />
+          <input name="search" id="search" placeholder="City name" />
           <button>Submit</button>
         </div>
       </nav>
@@ -39,6 +39,14 @@
     </div>
     <div id="hourlyForecastContainer">
       <h1>Hourly View:</h1>
+      <table id="hourlyTable">
+        <tr>
+          <th>Time</th>
+          <th>Condition</th>
+          <th>Temperature</th>
+          <th>Rain Chance %</th>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

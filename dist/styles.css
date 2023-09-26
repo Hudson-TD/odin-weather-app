@@ -67,8 +67,10 @@ header {
   margin-left: 100px;
 }
 
-#hourlyForecastContainer {
-  display: flex;
+td,
+th,
+tr {
+  padding: 25px;
 }
 
 #weatherToday {

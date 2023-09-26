@@ -1,4 +1,4 @@
-export default function parseWeekday(value) {
+function parseWeekday(value) {
   switch (value) {
     case 0:
       return "Monday";
@@ -25,3 +25,5 @@ export default function parseWeekday(value) {
       break;
   }
 }
+
+export { parseWeekday };
