@@ -46,7 +46,7 @@ function generateWeatherCard(weatherData) {
   let tempF = document.createElement("p");
   tempF.innerText = `${weatherData.current.feelslike_f} \u00B0F`;
   let humidity = document.createElement("p");
-  humidity.innerText = `${weatherData.current.humidity}%`;
+  humidity.innerText = `${weatherData.current.humidity} %`;
 
   todayContainer.append(
     location,
@@ -69,4 +69,14 @@ async function getWeatherToday() {
   generateWeatherCard(data);
 }
 
-getWeatherToday();
+async function getThreeDayForecast() {
+  const request = await fetch(
+    `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=atlanta&days=3`
+  );
+  const data = await request.json();
+
+  console.log(data);
+}
+
+//getWeatherToday();
+getThreeDayForecast();
