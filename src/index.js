@@ -6,6 +6,7 @@ const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const reverse = require("reverse-geocode");
 
 const todayContainer = document.getElementById("weatherToday");
+const forecastContainer = document.getElementById("threeDayForecast");
 const locationText = document.getElementById("userLocation");
 
 function init() {
@@ -28,6 +29,7 @@ const successCb = (position) => {
 
   locationText.innerText = `Home Location: ${parsedLocation.city}, ${parsedLocation.state}`;
   getWeatherToday(parsedLocation.city);
+  getThreeDayForecast(parsedLocation.city);
 };
 
 const errorCb = (error) => {
@@ -50,28 +52,52 @@ const errorCb = (error) => {
 function generateWeatherCard(weatherData) {
   let location = document.createElement("h3");
   location.innerText = `${weatherData.location.name}, ${weatherData.location.region}`;
-  let lastUpdate = document.createElement("p");
-  lastUpdate.innerText = `${weatherData.current.last_updated}`;
   let weekdayText = document.createElement("p");
   weekdayText.innerText = parseWeekday(weatherData.current.is_day);
+  let lastUpdate = document.createElement("p");
+  lastUpdate.innerText = `${weatherData.current.last_updated}`;
   let conditionImg = document.createElement("img");
   conditionImg.src = `${weatherData.current.condition.icon}`;
   let conditionText = document.createElement("p");
   conditionText.innerText = `${weatherData.current.condition.text}`;
   let tempF = document.createElement("p");
-  tempF.innerText = `${weatherData.current.feelslike_f} \u00B0F`;
+  tempF.innerText = `Feels like: ${weatherData.current.feelslike_f} \u00B0F`;
   let humidity = document.createElement("p");
-  humidity.innerText = `${weatherData.current.humidity} %`;
+  humidity.innerText = `Humidity: ${weatherData.current.humidity} %`;
 
   todayContainer.append(
     location,
-    lastUpdate,
     weekdayText,
+    lastUpdate,
     conditionText,
     conditionImg,
     tempF,
     humidity
   );
+}
+
+function generateForecastCards(forecastData) {
+  let card = document.createElement("div");
+  let date = document.createElement("p");
+  date.innerText = `${forecastData.date}`;
+  let sunrise = document.createElement("p");
+  sunrise.innerText = `Sunrise: ${forecastData.astro.sunrise}`;
+  let sunset = document.createElement("p");
+  sunset.innerText = `Sunset: ${forecastData.astro.sunset}`;
+  let dailyConditionImg = document.createElement("img");
+  dailyConditionImg.src = `${forecastData.day.condition.icon}`;
+  let maxtemp = document.createElement("p");
+  maxtemp.innerText = `High: ${forecastData.day.maxtemp_f} \u00B0F`;
+  let minTemp = document.createElement("p");
+  minTemp.innerText = `Low: ${forecastData.day.mintemp_f} \u00B0F`;
+  //   let uvIndex = document.createElement("p");
+  //   uvIndex.innerText = `${forecastData.day.uv}`;
+
+  card.classList.add("forecast-card");
+
+  card.append(date, sunrise, sunset, dailyConditionImg, maxtemp, minTemp);
+
+  forecastContainer.appendChild(card);
 }
 
 async function getWeatherToday(city) {
@@ -84,13 +110,16 @@ async function getWeatherToday(city) {
   generateWeatherCard(data);
 }
 
-async function getThreeDayForecast() {
+async function getThreeDayForecast(city) {
   const request = await fetch(
-    `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=atlanta&days=3`
+    `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=${city}&days=3`
   );
   const data = await request.json();
+  let target = data.forecast.forecastday;
 
-  console.log(data);
+  for (let i = 0; i < target.length; i++) {
+    generateForecastCards(target[i]);
+  }
 }
 
 init();

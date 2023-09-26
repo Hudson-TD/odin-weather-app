@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Odin Project: Weather App</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap"
+      rel="stylesheet"
+    />
     <script src="main.js" defer></script>
   </head>
   <body>
@@ -14,7 +20,13 @@
         <p id="userLocation"></p>
       </nav>
     </header>
-    <div id="weatherToday"></div>
-    <div id="threeDayForecast"></div>
+    <div id="dailyInfoContainer">
+      <h1>Currently:</h1>
+      <div id="weatherToday"></div>
+    </div>
+    <div id="forecastContainer">
+      <h1>3-Day Forecast:</h1>
+      <div id="threeDayForecast"></div>
+    </div>
   </body>
 </html>
