@@ -1,36 +1,10 @@
 console.log("Build Successful");
 
+import parseWeekday from "./utils";
+
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 const todayContainer = document.getElementById("today");
-
-function parseWeekday(value) {
-  switch (value) {
-    case 0:
-      return "Monday";
-      break;
-    case 1:
-      return "Tuesday";
-      break;
-    case 2:
-      return "Wednesday";
-      break;
-    case 3:
-      return "Thursday";
-      break;
-    case 4:
-      return "Friday";
-      break;
-    case 5:
-      return "Saturday";
-      break;
-    case 6:
-      return "Sunday";
-      break;
-    default:
-      break;
-  }
-}
 
 function generateWeatherCard(weatherData) {
   let location = document.createElement("h3");
@@ -79,4 +53,4 @@ async function getThreeDayForecast() {
 }
 
 //getWeatherToday();
-getThreeDayForecast();
+getWeatherToday();
