@@ -1,7 +1,14 @@
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+}
+
 #weatherToday {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 15px;
   border-left: 10px solid black;
   padding-left: 50px;
 }
@@ -9,4 +16,15 @@
 img {
   width: 50px;
   height: 50px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: flex-start;
+  gap: 50px;
+  height: 10vh;
+  align-items: center;
+  margin-bottom: 50px;
+  color: white;
+  background-color: rgb(43, 43, 43);
 }

@@ -8,6 +8,10 @@ const reverse = require("reverse-geocode");
 const todayContainer = document.getElementById("weatherToday");
 const locationText = document.getElementById("userLocation");
 
+function init() {
+  getLocation();
+}
+
 async function getLocation() {
   const userLocation = await navigator.geolocation.getCurrentPosition(
     successCb,
@@ -20,9 +24,10 @@ const successCb = (position) => {
   let x = position.coords.latitude;
   let y = position.coords.longitude;
 
-  const parsedCity = reverse.lookup(x, y, "us");
+  const parsedLocation = reverse.lookup(x, y, "us");
 
-  locationText.innerText = `${parsedCity.city}`;
+  locationText.innerText = `Home Location: ${parsedLocation.city}, ${parsedLocation.state}`;
+  getWeatherToday(parsedLocation.city);
 };
 
 const errorCb = (error) => {
@@ -69,9 +74,9 @@ function generateWeatherCard(weatherData) {
   );
 }
 
-async function getWeatherToday() {
+async function getWeatherToday(city) {
   const request = await fetch(
-    `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=atlanta`
+    `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`
   );
   const data = await request.json();
 
@@ -88,6 +93,4 @@ async function getThreeDayForecast() {
   console.log(data);
 }
 
-//getWeatherToday();
-getLocation();
-getWeatherToday();
+init();
