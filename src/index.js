@@ -3,8 +3,44 @@ console.log("Build Successful");
 import parseWeekday from "./utils";
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const reverse = require("reverse-geocode");
 
-const todayContainer = document.getElementById("today");
+const todayContainer = document.getElementById("weatherToday");
+const locationText = document.getElementById("userLocation");
+
+async function getLocation() {
+  const userLocation = await navigator.geolocation.getCurrentPosition(
+    successCb,
+    errorCb
+  );
+}
+
+const successCb = (position) => {
+  console.log(position);
+  let x = position.coords.latitude;
+  let y = position.coords.longitude;
+
+  const parsedCity = reverse.lookup(x, y, "us");
+
+  locationText.innerText = `${parsedCity.city}`;
+};
+
+const errorCb = (error) => {
+  let errorMessage = "Unknown error";
+  switch (error.code) {
+    case 1:
+      errorMessage = "Permission denied";
+      break;
+    case 2:
+      errorMessage = "Position unavailable";
+      break;
+    case 3:
+      errorMessage = "Timeout";
+      break;
+  }
+
+  console.log(errorMessage);
+};
 
 function generateWeatherCard(weatherData) {
   let location = document.createElement("h3");
@@ -53,4 +89,5 @@ async function getThreeDayForecast() {
 }
 
 //getWeatherToday();
+getLocation();
 getWeatherToday();
