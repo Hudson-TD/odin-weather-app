@@ -2,7 +2,7 @@
 *::before,
 *::after {
   padding: 0px;
-  margin: 10px;
+  margin: 5px;
   font-family: "Ubuntu", sans-serif;
 }
 
@@ -27,9 +27,19 @@ header {
   gap: 10px;
   height: 10vh;
   align-items: center;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   color: white;
   background-color: rgb(43, 43, 43);
+}
+
+#weatherNotices {
+  grid-column-start: 1;
+  grid-column-end: 5;
+  padding: 15px;
+  margin: 10px 100px;
+  background-color: rgb(43, 43, 43);
+  color: white;
+  border-radius: 30px;
 }
 
 #weatherToday,
@@ -55,6 +65,10 @@ header {
   grid-column-end: 5;
   grid-row: 2 3;
   margin-left: 100px;
+}
+
+#hourlyForecastContainer {
+  display: flex;
 }
 
 #weatherToday {
