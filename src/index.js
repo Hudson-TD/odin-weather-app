@@ -1,6 +1,6 @@
 console.log("Build Successful");
 
-import { parseWeekday, epochToHour } from "./utils";
+import { parseWeekday } from "./utils";
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
@@ -83,9 +83,9 @@ function generateWeatherCard(weatherData) {
   let location = document.createElement("h3");
   location.innerText = `${weatherData.location.name}, ${weatherData.location.region}`;
   let weekdayText = document.createElement("p");
-  weekdayText.innerText = parseWeekday(weatherData.current.is_day);
+  weekdayText.innerText = parseWeekday(weatherData.location.localtime);
   let lastUpdate = document.createElement("p");
-  lastUpdate.innerText = `${weatherData.current.last_updated}`;
+  lastUpdate.innerText = `Last Update: ${weatherData.current.last_updated}`;
   let conditionImg = document.createElement("img");
   conditionImg.src = `${weatherData.current.condition.icon}`;
   let conditionText = document.createElement("p");
@@ -120,8 +120,6 @@ function generateForecastCards(forecastData) {
   maxtemp.innerText = `High: ${forecastData.day.maxtemp_f} \u00B0F`;
   let minTemp = document.createElement("p");
   minTemp.innerText = `Low: ${forecastData.day.mintemp_f} \u00B0F`;
-  //   let uvIndex = document.createElement("p");
-  //   uvIndex.innerText = `${forecastData.day.uv}`;
 
   card.classList.add("forecast-card");
 
@@ -162,12 +160,43 @@ function generateNewsStories(newsData) {
   trendingNews.appendChild(storyCard);
 }
 
-// async function getHighlightsToday(city) {
-//   const request = await fetch(
-//     `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`
-//   );
-//   const data = await request.json();
-// }
+function getUVIndex(uvValue) {
+  let currentScale = "";
+
+  if (uvValue < 3) {
+    currentScale = "Low";
+  } else if (uvValue < 6) {
+    currentScale = "Moderate";
+  } else if (uvValue < 8) {
+    currentScale = "High";
+  } else if (uvValue < 11) {
+    currentScale = "Very High";
+  } else {
+    currentScale = "Extreme";
+  }
+
+  switch (currentScale) {
+    case "Low":
+      weatherNotices.style = "background-color: #baffc9;";
+      break;
+    case "Moderate":
+      weatherNotices.style = "background-color: #ffffba;";
+      break;
+    case "High":
+      weatherNotices.style = "background-color: #ffdfba;";
+      break;
+    case "Very High":
+      weatherNotices.style = "background-color: #ffb3ba;";
+      break;
+    case "Extreme":
+      weatherNotices.style = "background-color: #e0d6ff;";
+      break;
+    default:
+      break;
+  }
+
+  weatherNotices.innerText = `UV Index: ${uvValue} (${currentScale})`;
+}
 
 async function getWeatherToday(city) {
   const request = await fetch(
@@ -176,6 +205,7 @@ async function getWeatherToday(city) {
   const data = await request.json();
 
   generateWeatherCard(data);
+  getUVIndex(data.current.uv);
 }
 
 async function getThreeDayForecast(city) {

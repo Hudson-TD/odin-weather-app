@@ -30,15 +30,19 @@ header {
   margin-bottom: 20px;
   color: white;
   background-color: rgb(43, 43, 43);
+  border-radius: 8px;
 }
 
 #weatherNotices {
-  grid-column-start: 1;
-  grid-column-end: 5;
-  padding: 15px;
+  grid-column-start: 2;
+  grid-column-end: 4;
+  border: 2px solid grey;
+  color: black;
+  font-weight: bold;
+  font-size: 1.15rem;
+  text-align: center;
+  padding: 10px;
   margin: 10px 100px;
-  background-color: rgb(43, 43, 43);
-  color: white;
   border-radius: 30px;
 }
 
@@ -54,6 +58,8 @@ table,
 .forecast-card {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 #dailyInfoContainer {
@@ -61,6 +67,7 @@ table,
   grid-column-end: 2;
   grid-row: 2 3;
 }
+
 #forecastContainer {
   grid-column-start: 2;
   grid-column-end: 5;
@@ -139,6 +146,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-p {
-  font-size: 0.9rem;
+p,
+label {
+  font-size: 1.1rem;
 }
