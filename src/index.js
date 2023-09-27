@@ -24,7 +24,7 @@ async function getLocation() {
 }
 
 const successCb = (position) => {
-  console.log(position);
+  // console.log(position);
   let x = position.coords.latitude;
   let y = position.coords.longitude;
 
@@ -54,7 +54,7 @@ const errorCb = (error) => {
 
   console.log(errorMessage);
   window.alert(
-    "Home location could not be distinguished, please set this manually for the best experience!"
+    "Location access denied, or could not be parsed. Please use the search input for weather data."
   );
 
   locationText.innerText = `Home Location: Undefined`;
@@ -107,9 +107,10 @@ function generateWeatherCard(weatherData) {
 }
 
 function generateForecastCards(forecastData) {
-  let card = document.createElement("div");
+  let forecastCard = document.createElement("div");
   let date = document.createElement("p");
   date.innerText = `${forecastData.date}`;
+  date.style = "font-weight:bold;";
   let sunrise = document.createElement("p");
   sunrise.innerText = `Sunrise: ${forecastData.astro.sunrise}`;
   let sunset = document.createElement("p");
@@ -121,11 +122,18 @@ function generateForecastCards(forecastData) {
   let minTemp = document.createElement("p");
   minTemp.innerText = `Low: ${forecastData.day.mintemp_f} \u00B0F`;
 
-  card.classList.add("forecast-card");
+  forecastCard.classList.add("forecast-card");
 
-  card.append(date, sunrise, sunset, dailyConditionImg, maxtemp, minTemp);
+  forecastCard.append(
+    date,
+    sunrise,
+    sunset,
+    dailyConditionImg,
+    maxtemp,
+    minTemp
+  );
 
-  forecastContainer.appendChild(card);
+  forecastContainer.appendChild(forecastCard);
 }
 
 function generateHourlyForecastCards(hourlyData) {
