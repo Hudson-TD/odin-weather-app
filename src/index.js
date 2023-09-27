@@ -3,7 +3,6 @@ console.log("Build Successful");
 import { parseWeekday } from "./utils";
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const reverse = require("reverse-geocode");
 
 const todayContainer = document.getElementById("weatherToday");
@@ -13,7 +12,7 @@ const weatherNotices = document.getElementById("weatherNotices");
 const locationText = document.getElementById("userLocation");
 const searchInput = document.getElementById("search");
 const searchSubmitBtn = document.getElementById("searchSubmit");
-const trendingNews = document.getElementById("trendingNews");
+// const trendingNews = document.getElementById("trendingNews");
 
 function init() {
   getLocation();
@@ -35,7 +34,6 @@ const successCb = (position) => {
   getWeatherToday(userHomeLocation.city);
   getThreeDayForecast(userHomeLocation.city);
   getHourlyForecast(userHomeLocation.city);
-  getTopNews();
 };
 
 const errorCb = (error) => {
@@ -151,22 +149,22 @@ function generateHourlyForecastCards(hourlyData) {
   hourlyTable.appendChild(tableTr);
 }
 
-function generateNewsStories(newsData) {
-  let storyCard = document.createElement("div");
-  storyCard.classList.add("storyCard");
-  let sourceName = document.createElement("h3");
-  sourceName.innerText = `${newsData.source.name}`;
-  let storyTitle = document.createElement("h4");
-  storyTitle.innerText = `${newsData.title}`;
-  let storyURL = document.createElement("a");
-  storyURL.innerText = `${newsData.url}`;
-  storyURL.href = `${newsData.url}`;
-  storyURL.target = `/blank`;
+// function generateNewsStories(newsData) {
+//   let storyCard = document.createElement("div");
+//   storyCard.classList.add("storyCard");
+//   let sourceName = document.createElement("h3");
+//   sourceName.innerText = `${newsData.source.name}`;
+//   let storyTitle = document.createElement("h4");
+//   storyTitle.innerText = `${newsData.title}`;
+//   let storyURL = document.createElement("a");
+//   storyURL.innerText = `${newsData.url}`;
+//   storyURL.href = `${newsData.url}`;
+//   storyURL.target = `/blank`;
 
-  storyCard.append(sourceName, storyTitle, storyURL);
+//   storyCard.append(sourceName, storyTitle, storyURL);
 
-  trendingNews.appendChild(storyCard);
-}
+//   trendingNews.appendChild(storyCard);
+// }
 
 function getUVIndex(uvValue) {
   let currentScale = "";
@@ -237,18 +235,6 @@ async function getHourlyForecast(city) {
 
   for (let i = 7; i < target.hour.length; i++) {
     generateHourlyForecastCards(target.hour[i]);
-  }
-}
-
-async function getTopNews() {
-  const request = await fetch(
-    `https://newsapi.org/v2/top-headlines?country=us&apiKey=${NEWS_API_KEY}`
-  );
-
-  const data = await request.json();
-
-  for (let i = 0; i < 5; i++) {
-    generateNewsStories(data.articles[i]);
   }
 }
 
